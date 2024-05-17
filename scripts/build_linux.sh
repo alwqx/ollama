@@ -22,6 +22,7 @@ for TARGETARCH in ${BUILD_ARCH}; do
         .
     docker create --platform linux/$TARGETARCH --name builder-$TARGETARCH builder:$TARGETARCH
     docker cp builder-$TARGETARCH:/go/src/github.com/ollama/ollama/ollama ./dist/ollama-linux-$TARGETARCH
+    chmod +x ./dist/ollama-linux-$TARGETARCH
 
     if [ "$TARGETARCH" = "amd64" ]; then
         docker cp builder-$TARGETARCH:/go/src/github.com/ollama/ollama/dist/deps/ ./dist/

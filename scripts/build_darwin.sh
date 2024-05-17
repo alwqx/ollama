@@ -43,4 +43,5 @@ if [ -n "$APPLE_IDENTITY" ]; then
     xcrun notarytool submit dist/temp.zip --wait --timeout 10m --apple-id $APPLE_ID --password $APPLE_PASSWORD --team-id $APPLE_TEAM_ID
 fi
 mv dist/ollama dist/ollama-darwin
+chmod +x dist/ollama-darwin
 rm -f dist/temp.zip
