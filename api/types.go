@@ -656,6 +656,6 @@ type CompletionProbability struct {
 
 // CompletionProbs is a tuple of a human readable next token and the according probability.
 type CompletionProbs struct {
-	Prob    float64 `json:"prob"`
-	Content string  `json:"content"`
+	Prob     float64 `json:"prob"`
+	TokenStr string  `json:"tok_str"`
 }
