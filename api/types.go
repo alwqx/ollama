@@ -113,10 +113,11 @@ type Message struct {
 // ChatResponse is the response returned by [Client.Chat]. Its fields are
 // similar to [GenerateResponse].
 type ChatResponse struct {
-	Model      string    `json:"model"`
-	CreatedAt  time.Time `json:"created_at"`
-	Message    Message   `json:"message"`
-	DoneReason string    `json:"done_reason,omitempty"`
+	Model                   string                  `json:"model"`
+	CreatedAt               time.Time               `json:"created_at"`
+	Message                 Message                 `json:"message"`
+	DoneReason              string                  `json:"done_reason,omitempty"`
+	CompletionProbabilities []CompletionProbability `json:"completion_probabilities,omitempty"`
 
 	Done bool `json:"done"`
 
@@ -141,6 +142,7 @@ type Options struct {
 	NumKeep          int      `json:"num_keep,omitempty"`
 	Seed             int      `json:"seed,omitempty"`
 	NumPredict       int      `json:"num_predict,omitempty"`
+	NProbs           int      `json:"n_probs,omitempty"`
 	TopK             int      `json:"top_k,omitempty"`
 	TopP             float32  `json:"top_p,omitempty"`
 	TFSZ             float32  `json:"tfs_z,omitempty"`
@@ -367,6 +369,9 @@ type GenerateResponse struct {
 	// can be sent in the next request to keep a conversational memory.
 	Context []int `json:"context,omitempty"`
 
+	// Optional completion probabilities (chance + completion)
+	CompletionProbabilities []CompletionProbability `json:"completion_probabilities,omitempty"`
+
 	Metrics
 }
 
@@ -512,6 +517,7 @@ func DefaultOptions() Options {
 		// set a minimal num_keep to avoid issues on context shifts
 		NumKeep:          4,
 		Temperature:      0.8,
+		NProbs:           0,
 		TopK:             40,
 		TopP:             0.9,
 		TFSZ:             1.0,
@@ -640,4 +646,16 @@ func FormatParams(params map[string][]string) (map[string]interface{}, error) {
 	}
 
 	return out, nil
+}
+
+// CompletionProbability is returned by llama.cpp if n_probs is set.
+type CompletionProbability struct {
+	Content string            `json:"content"`
+	Probs   []CompletionProbs `json:"probs"`
+}
+
+// CompletionProbs is a tuple of a human readable next token and the according probability.
+type CompletionProbs struct {
+	Prob    float64 `json:"prob"`
+	Content string  `json:"content"`
 }
